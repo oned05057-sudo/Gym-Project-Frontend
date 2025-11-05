@@ -101,7 +101,7 @@ function AddWorkout({ day, addSingleDayRoutine, initialWorkouts = [], exercises 
               onClick={() => setAddExercise(false)}
               className="text-destructive hover:font-bold hover:text-red-600 py-1 px-2 bg-red-300 rounded-sm"
             >
-              
+              ❌
             </button>
           </div>
         </div>

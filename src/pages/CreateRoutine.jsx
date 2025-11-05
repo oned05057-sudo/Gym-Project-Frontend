@@ -1,34 +1,29 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Save } from "lucide-react";
-import Navbar from "../components/Navbar.jsx";
-import AddWorkout from "../components/AddWorkout.jsx";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchUserTests,
-  flattenExerciseList,
-  UserAvailableExercises,
-  getMembers,
-} from "../serviceFunctions/userRelatedFunc.js";
-import { setUsers } from "../redux/slices/dataSlice.js";
-import ViewTest from "../components/ViewTest.jsx";
-import { routinesApi } from "../mocks/mockApi.js";
+import React, { useState, useEffect, useRef } from 'react';
+import { Save } from 'lucide-react';
+import Navbar from '../components/Navbar.jsx';
+import AddWorkout from '../components/AddWorkout.jsx';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserTests, flattenExerciseList, UserAvailableExercises, getMembers } from '../serviceFunctions/userRelatedFunc.js';
+import { setUsers } from '../redux/slices/dataSlice.js';
+import ViewTest from '../components/ViewTest.jsx';
+import { routinesApi } from '../mocks/mockApi.js';
 
 const CreateRoutine = () => {
   const dispatch = useDispatch();
   const { totalMembers } = useSelector((state) => state.dataSlice);
 
   const [members, setMembers] = useState(totalMembers || []);
-  const [memberSearch, setMemberSearch] = useState("");
+  const [memberSearch, setMemberSearch] = useState('');
   const [showMemberDropdown, setShowMemberDropdown] = useState(false);
-  const [selectedMember, setSelectedMember] = useState("");
-  const [routineName, setRoutineName] = useState("");
+  const [selectedMember, setSelectedMember] = useState('');
+  const [routineName, setRoutineName] = useState('');
   const [selectedDays, setSelectedDays] = useState({});
   const [saving, setSaving] = useState(false);
   const [availableExercise, setAvailableExercise] = useState([]);
   const [showTestTable, setShowTestTable] = useState([]);
 
   const memberInputRef = useRef(null);
-  const daysOfWeek = ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6"];
+  const daysOfWeek = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6'];
   const [weekRoutine, setWeekRoutine] = useState([]);
 
   // Close dropdown on outside click or Escape
@@ -39,25 +34,24 @@ const CreateRoutine = () => {
       }
     };
     const handleKey = (e) => {
-      if (e.key === "Escape") setShowMemberDropdown(false);
+      if (e.key === 'Escape') setShowMemberDropdown(false);
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleKey);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKey);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleKey);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKey);
     };
   }, []);
 
   // Fetch member tests & available exercises
   useEffect(() => {
     const run = async () => {
-      if (!selectedMember) return;
       const data = await fetchUserTests(selectedMember);
       setShowTestTable(flattenExerciseList(data));
       setAvailableExercise(UserAvailableExercises(data));
     };
-    run();
+    if (selectedMember) run();
   }, [selectedMember]);
 
   // Sync input with selected member
@@ -95,29 +89,24 @@ const CreateRoutine = () => {
       const idx = daysOfWeek.indexOf(obj.day);
       if (idx >= 0 && idx < 3) {
         const mappedDay = daysOfWeek[idx + 3];
+        // Only overwrite if Day 4/5/6 not manually edited yet
         if (!prev[mappedDay] || prev[mappedDay].length === 0) {
-          next[mappedDay] = obj.workouts
-            ? JSON.parse(JSON.stringify(obj.workouts))
-            : [];
+          next[mappedDay] = obj.workouts ? JSON.parse(JSON.stringify(obj.workouts)) : [];
         }
       }
       return next;
     });
   };
 
-  // Submit Routine
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedMember || !routineName) return;
 
-    const filteredDays = Object.entries(selectedDays).reduce(
-      (acc, [day, exercises]) => {
-        const validExercises = exercises.filter((ex) => ex.id);
-        if (validExercises.length > 0) acc[day] = validExercises;
-        return acc;
-      },
-      {}
-    );
+    const filteredDays = Object.entries(selectedDays).reduce((acc, [day, exercises]) => {
+      const validExercises = exercises.filter((ex) => ex.id);
+      if (validExercises.length > 0) acc[day] = validExercises;
+      return acc;
+    }, {});
 
     setSaving(true);
     try {
@@ -128,13 +117,13 @@ const CreateRoutine = () => {
       });
 
       // Reset
-      setSelectedMember("");
-      setRoutineName("");
+      setSelectedMember('');
+      setRoutineName('');
       setSelectedDays({});
       setWeekRoutine([]);
-      setMemberSearch("");
+      setMemberSearch('');
     } catch (err) {
-      console.error("Failed to create routine:", err);
+      console.error('Failed to create routine:', err);
     } finally {
       setSaving(false);
     }
@@ -146,20 +135,15 @@ const CreateRoutine = () => {
       <div className="max-w-6xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Create Routine</h1>
-          <p className="mt-2 text-muted-foreground">
-            Design workout routines for your members
-          </p>
+          <p className="mt-2 text-muted-foreground">Design workout routines for your members</p>
         </div>
 
         <div className="bg-card rounded-xl shadow-sm border border-border p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Member Selection + Routine Name */}
+            {/* Member & Routine */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Member Selection */}
               <div>
-                <label className="block text-sm font-medium text-card-foreground mb-2">
-                  Select Member
-                </label>
+                <label className="block text-sm font-medium text-card-foreground mb-2">Select Member</label>
                 <div className="relative" ref={memberInputRef}>
                   <input
                     type="text"
@@ -168,7 +152,7 @@ const CreateRoutine = () => {
                       const v = e.target.value;
                       setMemberSearch(v);
                       setShowMemberDropdown(true);
-                      if (v === "") setSelectedMember("");
+                      if (v === '') setSelectedMember('');
                     }}
                     onFocus={() => setShowMemberDropdown(true)}
                     placeholder="Search or choose a member..."
@@ -178,11 +162,7 @@ const CreateRoutine = () => {
                   {showMemberDropdown && (
                     <ul className="absolute z-20 mt-1 max-h-32 w-full overflow-auto rounded-md bg-card border border-border shadow-lg">
                       {members
-                        .filter((m) =>
-                          m.name
-                            .toLowerCase()
-                            .includes(memberSearch.toLowerCase())
-                        )
+                        .filter((m) => m.name.toLowerCase().includes(memberSearch.toLowerCase()))
                         .map((member) => (
                           <li
                             key={member.id}
@@ -200,46 +180,10 @@ const CreateRoutine = () => {
                     </ul>
                   )}
                 </div>
-
-                {/* Show Member Measurements */}
-                {selectedMember && (
-                  <div className="mt-4 bg-muted p-4 rounded-lg border border-border">
-                    {(() => {
-                      const selected = members.find(
-                        (m) => m.enrollmentId === selectedMember
-                      );
-                      if (!selected) return null;
-                      return (
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
-                          <p>
-                            <strong>Height:</strong>{" "}
-                            {selected.height ? `${selected.height} cm` : "N/A"}
-                          </p>
-                          <p>
-                            <strong>Weight:</strong>{" "}
-                            {selected.weight ? `${selected.weight} kg` : "N/A"}
-                          </p>
-                          <p>
-                            <strong>BMI:</strong> {selected.bmi || "N/A"}
-                          </p>
-                          <p>
-                            <strong>Age:</strong> {selected.age || "N/A"}
-                          </p>
-                          <p>
-                            <strong>Gender:</strong> {selected.gender || "N/A"}
-                          </p>
-                        </div>
-                      );
-                    })()}
-                  </div>
-                )}
               </div>
 
-              {/* Routine Name */}
               <div>
-                <label className="block text-sm font-medium text-card-foreground mb-2">
-                  Routine Name
-                </label>
+                <label className="block text-sm font-medium text-card-foreground mb-2">Routine Name</label>
                 <input
                   type="text"
                   value={routineName}
@@ -252,15 +196,11 @@ const CreateRoutine = () => {
             </div>
 
             {/* Test Table */}
-            {selectedMember && showTestTable.length > 0 && (
-              <ViewTest exercisesTested={showTestTable} reTest={false} />
-            )}
+            {selectedMember && showTestTable.length > 0 && <ViewTest exercisesTested={showTestTable} reTest={false} />}
 
             {/* Weekly Schedule */}
             <div>
-              <h3 className="text-lg font-medium text-card-foreground mb-6">
-                Weekly Schedule
-              </h3>
+              <h3 className="text-lg font-medium text-card-foreground mb-6">Weekly Schedule</h3>
               <div className="space-y-6">
                 {daysOfWeek.map((day, index) => (
                   <AddWorkout
@@ -283,7 +223,7 @@ const CreateRoutine = () => {
                 className="flex items-center space-x-2 bg-gradient-to-r from-primary to-secondary text-primary-foreground font-medium py-3 px-6 rounded-lg hover:from-primary/90 hover:to-secondary/90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save className="h-5 w-5" />
-                <span>{saving ? "Creating..." : "Create Routine"}</span>
+                <span>{saving ? 'Creating...' : 'Create Routine'}</span>
               </button>
             </div>
           </form>
