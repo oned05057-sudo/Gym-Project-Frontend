@@ -49,7 +49,7 @@ const CreateRoutine = () => {
     const run = async () => {
       const data = await fetchUserTests(selectedMember);
       setShowTestTable(flattenExerciseList(data));
-      setAvailableExercise(UserAvailableExercises(data));
+      setAvailableExercise(UserAvailableExercises(data)); // full exercises
     };
     if (selectedMember) run();
   }, [selectedMember]);
@@ -89,7 +89,7 @@ const CreateRoutine = () => {
       const idx = daysOfWeek.indexOf(obj.day);
       if (idx >= 0 && idx < 3) {
         const mappedDay = daysOfWeek[idx + 3];
-        // Only overwrite if Day 4/5/6 not manually edited yet
+        // Only overwrite if Day 4/5/6 empty or not manually edited
         if (!prev[mappedDay] || prev[mappedDay].length === 0) {
           next[mappedDay] = obj.workouts ? JSON.parse(JSON.stringify(obj.workouts)) : [];
         }
@@ -209,7 +209,7 @@ const CreateRoutine = () => {
                     index={index}
                     addSingleDayRoutine={addSingleDayRoutine}
                     initialWorkouts={selectedDays[day] || []}
-                    exercises={availableExercise || []}
+                    exercises={availableExercise || []} // full exercises
                   />
                 ))}
               </div>
