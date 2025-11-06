@@ -30,7 +30,7 @@ function AddWorkout({ day, addSingleDayRoutine, initialWorkouts = [], exercises 
     if (initialWorkouts && initialWorkouts.length > 0) {
       setWorkout(initialWorkouts);
       const mapped = initialWorkouts.map((w) => {
-        const exId = w.Exercise || w.exerciseId || w.exercise;
+        const exId = w.Exercise || w.exerciseId || w.id;
         const exObj = (exercises || []).find((e) => String(e.id) === String(exId));
         return { id: exId, name: exObj ? exObj.name : '', sets: w.sets || [] };
       });
@@ -42,7 +42,7 @@ function AddWorkout({ day, addSingleDayRoutine, initialWorkouts = [], exercises 
 
   function deleteWorkOut(value){
     setCurrentDayExercise(prev => prev.filter((item) => item.id !== value));
-    setWorkout(prev=>prev.filter((item)=>item.Exercise !==value))
+    setWorkout(prev => prev.filter((item) => item.id !== value && item.Exercise !== value));
   }
 
   function addWorkOutHandler(sglWorlOut){
@@ -52,7 +52,7 @@ function AddWorkout({ day, addSingleDayRoutine, initialWorkouts = [], exercises 
   function handleSaveForDay(){
     setIsSaved(true);
     setDeleteBtn(false);
-    addSingleDayRoutine({ day, workouts });
+    addSingleDayRoutine({ day, workouts: currDayExercise });
   }
 
   return (
@@ -74,7 +74,7 @@ function AddWorkout({ day, addSingleDayRoutine, initialWorkouts = [], exercises 
 
       {addExercise && (
         <div className="flex flex-col gap-y-2">
-          <div className={`flex items-center space-x-4 p-4 bg-muted/50 ${isSaved ? "hidden":""}`}>
+          <div className={`flex items-center space-x-4 p-4 bg-muted/50 ${isSaved ? "" : ""}`}>
             <div className="flex-1">
               <select
                 value={selectedExerciseId}
@@ -82,7 +82,7 @@ function AddWorkout({ day, addSingleDayRoutine, initialWorkouts = [], exercises 
                   const id = e.target.value;
                   const name = e.target.options[e.target.selectedIndex].text;
                   if (id) {
-                    setCurrentDayExercise(prev => [...prev, { id, name }]);
+                    setCurrentDayExercise(prev => [...prev, { id, name, sets: [] }]);
                     setSelectedExerciseId('');
                   } else {
                     setSelectedExerciseId('');
@@ -101,7 +101,7 @@ function AddWorkout({ day, addSingleDayRoutine, initialWorkouts = [], exercises 
               onClick={() => setAddExercise(false)}
               className="text-destructive hover:font-bold hover:text-red-600 py-1 px-2 bg-red-300 rounded-sm"
             >
-              
+              ×
             </button>
           </div>
         </div>
@@ -124,7 +124,7 @@ function AddWorkout({ day, addSingleDayRoutine, initialWorkouts = [], exercises 
       )}
 
       <button
-        className={`w-fit h-fit text-black font-bold hover:text-green-900 py-1 px-2 bg-green-400 rounded-sm mt-1 ${workouts.length===0 || isSaved ? "hidden":""}`}
+        className={`w-fit h-fit text-black font-bold hover:text-green-900 py-1 px-2 bg-green-400 rounded-sm mt-1 ${currDayExercise.length===0 || isSaved ? "hidden":""}`}
         onClick={handleSaveForDay}
         type="button"
       >
