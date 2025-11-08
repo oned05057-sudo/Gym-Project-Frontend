@@ -13,8 +13,12 @@ function AddWorkout({ day, addSingleDayRoutine, initialWorkouts = [], exercises 
   const [currDayExercise, setCurrentDayExercise] = useState([]);
   const [addExercise, setAddExercise] = useState(false);
   const [selectedExerciseId, setSelectedExerciseId] = useState('');
-  const [isSaved,setIsSaved]=useState(false);
-  const [deleteBtn,setDeleteBtn]=useState(true);
+  const [isSaved, setIsSaved] = useState(false);
+  const [deleteBtn, setDeleteBtn] = useState(true);
+
+  //  NEW STATE VARIABLES for synchronized Max Weight and Max Reps
+  const [sharedMaxWeight, setSharedMaxWeight] = useState("");
+  const [sharedMaxReps, setSharedMaxReps] = useState("");
 
   useEffect(() => {
     if (!totalExercies || totalExercies.length === 0) {
@@ -40,20 +44,29 @@ function AddWorkout({ day, addSingleDayRoutine, initialWorkouts = [], exercises 
     }
   }, [initialWorkouts, exercises]);
 
-  function deleteWorkOut(value){
+  function deleteWorkOut(value) {
     setCurrentDayExercise(prev => prev.filter((item) => item.id !== value));
-    setWorkout(prev=>prev.filter((item)=>item.Exercise !==value))
+    setWorkout(prev => prev.filter((item) => item.Exercise !== value));
   }
 
-  function addWorkOutHandler(sglWorlOut){
-    setWorkout((prev)=>[...prev,sglWorlOut]);
+  function addWorkOutHandler(sglWorlOut) {
+    setWorkout((prev) => [...prev, sglWorlOut]);
   }
 
-  function handleSaveForDay(){
+  function handleSaveForDay() {
     setIsSaved(true);
     setDeleteBtn(false);
     addSingleDayRoutine({ day, workouts });
   }
+
+  //  NEW FUNCTIONS: update shared values across all AddSets components
+  const handleSharedMaxWeightChange = (newWeight) => {
+    setSharedMaxWeight(newWeight);
+  };
+
+  const handleSharedMaxRepsChange = (newReps) => {
+    setSharedMaxReps(newReps);
+  };
 
   return (
     <div className="border border-border rounded-lg p-6">
@@ -74,7 +87,7 @@ function AddWorkout({ day, addSingleDayRoutine, initialWorkouts = [], exercises 
 
       {addExercise && (
         <div className="flex flex-col gap-y-2">
-          <div className={`flex items-center space-x-4 p-4 bg-muted/50 ${isSaved ? "hidden":""}`}>
+          <div className={`flex items-center space-x-4 p-4 bg-muted/50 ${isSaved ? "hidden" : ""}`}>
             <div className="flex-1">
               <select
                 value={selectedExerciseId}
@@ -101,18 +114,29 @@ function AddWorkout({ day, addSingleDayRoutine, initialWorkouts = [], exercises 
               onClick={() => setAddExercise(false)}
               className="text-destructive hover:font-bold hover:text-red-600 py-1 px-2 bg-red-300 rounded-sm"
             >
-              
             </button>
           </div>
         </div>
       )}
 
       {currDayExercise.length > 0 ? (
-        currDayExercise.map((initialExercise,index) => {
+        currDayExercise.map((initialExercise, index) => {
           const result = exercises.filter(ex => ex.id == initialExercise.id);
           return (
-            <AddSets key={index} ex={initialExercise} deleteWorkOut={deleteWorkOut} addWorkOutHandler={addWorkOutHandler} deleteBtn={deleteBtn} exDetail={result[0]} />
-          )
+            <AddSets
+              key={index}
+              ex={initialExercise}
+              deleteWorkOut={deleteWorkOut}
+              addWorkOutHandler={addWorkOutHandler}
+              deleteBtn={deleteBtn}
+              exDetail={result[0]}
+              // ✅ Pass shared state and update functions
+              sharedMaxWeight={sharedMaxWeight}
+              sharedMaxReps={sharedMaxReps}
+              onSharedMaxWeightChange={handleSharedMaxWeightChange}
+              onSharedMaxRepsChange={handleSharedMaxRepsChange}
+            />
+          );
         })
       ) : (
         !addExercise && (
@@ -124,7 +148,7 @@ function AddWorkout({ day, addSingleDayRoutine, initialWorkouts = [], exercises 
       )}
 
       <button
-        className={`w-fit h-fit text-black font-bold hover:text-green-900 py-1 px-2 bg-green-400 rounded-sm mt-1 ${workouts.length===0 || isSaved ? "hidden":""}`}
+        className={`w-fit h-fit text-black font-bold hover:text-green-900 py-1 px-2 bg-green-400 rounded-sm mt-1 ${workouts.length === 0 || isSaved ? "hidden" : ""}`}
         onClick={handleSaveForDay}
         type="button"
       >

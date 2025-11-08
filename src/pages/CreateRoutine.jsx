@@ -210,7 +210,7 @@ const CreateRoutine = () => {
                       );
                       if (!selected) return null;
                       return (
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-card-foreground">
                           <p>
                             <strong>Height:</strong>{" "}
                             {selected.height ? `${selected.height} cm` : "N/A"}
@@ -220,7 +220,7 @@ const CreateRoutine = () => {
                             {selected.weight ? `${selected.weight} kg` : "N/A"}
                           </p>
                           <p>
-                            <strong>BMI:</strong> {selected.bmi || "N/A"}
+                            <strong>BMI:</strong> {selected.bmi || "Weight/Height"}
                           </p>
                           <p>
                             <strong>Age:</strong> {selected.age || "N/A"}
