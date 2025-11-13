@@ -381,6 +381,7 @@ const CreateRoutine = () => {
                           >
                             <div className="flex justify-between">
                               <span>{member.name}</span>
+                              <span>Enrollment No. {member.enrollmentId}</span>
                             </div>
                           </li>
                         ))}
