@@ -79,7 +79,7 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
     setAddSetVisibility(false);
   }
   return (
-    <div className="flex flex-col px-6 py-3 text-left text-base text-gray-500 dark:text-gray-200 tracking-wider dark:bg-slate-900 my-2 rounded-lg">
+    <div className="flex flex-col px-6 py-3 text-left text-base text-gray-500 dark:text-gray-200 bg-slate-200 tracking-wider dark:bg-slate-900 my-2 rounded-lg">
       <div className="flex flex-row justify-between items-center cursor-pointer "
       onClick={()=>{
         setShowSetsHandler(!showSets);
@@ -122,7 +122,7 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
               <table
                 className=" min-w-full divide-y divide-gray-200 dark:divide-gray-700"
               >
-                <thead className="bg-gray-50 dark:bg-gray-700 ">
+                <thead className="bg-gray-300 dark:bg-gray-700 ">
                   <tr className="rounded-lg">
                     <th className="px-6 py-1.5 w-[25%] text-left text-[14px] text-gray-500 dark:text-gray-200 tracking-wider">
                       Set No.
@@ -135,7 +135,7 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="bg-slate-100 dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {sets.map((set, index) => (
                     <motion.tr
                       key={index}
@@ -167,7 +167,7 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
             ) 
           ):(
             !addSets && (
-              <div className="text-[13px] text-yellow-300">No Sets Added</div>
+              <div className="text-[13px] dark:text-yellow-300 text-red-400">No Sets Added</div>
             )
           )
         }
@@ -203,7 +203,7 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
                 ))}
               </select>
               <input
-                type="text"
+                type="number"
                 value={weightValue}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -241,7 +241,7 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
                 ))}
               </select>
               <input
-                type="text"
+                type="number"
                 value={repsValue}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -250,7 +250,7 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
                   if (percentReps) setPercentReps('');
                 }}
                 className="w-[20%] px-1 py-1 bg-input text-center rounded-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                placeholder="12"
+                placeholder="0"
               />
             </div>
           </div>
@@ -262,6 +262,8 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
               // push a shallow copy of the ref object so each entry is independent
               formRef.current.setNo =formRef.current.setNo + 1;
               setSets((prev) => [...prev, { ...formRef.current }]);
+              // formRef.current.reps="";
+              // formRef.current.weight="";
               // mark that sets should be shown
               setShowSetsHandler(true);
               

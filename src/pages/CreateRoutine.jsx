@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserTests, flattenExerciseList, getAllExercise, getMembers, UserAvailableExercises } from '../serviceFunctions/userRelatedFunc.js';
 import { setAllExercises, setUsers } from '../redux/slices/dataSlice.js';
 import ViewTest from '../components/ViewTest.jsx';
+import toast from 'react-hot-toast';
 
 const CreateRoutine = () => {
   const dispatch = useDispatch();
@@ -131,7 +132,10 @@ const CreateRoutine = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!selectedMember || !routineName) return;
+    if (!selectedMember || !routineName){ 
+      toast.error("Choose member and Routine name");
+      return;
+    }
 
     
     // console.log("Week Routine is",weekRoutine);
@@ -193,6 +197,10 @@ const CreateRoutine = () => {
     });
 
 
+    if(weekRoutine.length !== 6){
+      toast.error("Add Workout for Each days")
+      return ;
+    }
     console.log("Week Routine is",newRoutine);
 
     const pdfObj = {
@@ -479,7 +487,7 @@ const CreateRoutine = () => {
             <div className="flex justify-end">
               <button
                 type="submit"
-                disabled={saving || !selectedMember || !routineName}
+                disabled={saving || !selectedMember || !routineName }
                 className="flex items-center space-x-2 bg-gradient-to-r from-primary to-secondary text-primary-foreground font-medium py-3 px-6 rounded-lg hover:from-primary/90 hover:to-secondary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save className="h-5 w-5" />

@@ -77,10 +77,25 @@ const Dashboard = () => {
 
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <Navbar />
-      
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div className="relative min-h-screen bg-background text-foreground transition-colors duration-300">
+      {/* Background video from public/bg.mp4 - put your file in public/ and name it bg.mp4 or change the src */}
+      <video
+        className="absolute inset-0 w-full h-full object-cover"
+        src="bg.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden="true"
+        poster="/bg-poster.jpg"
+      />
+      {/* Optional overlay to improve contrast */}
+      {/* <div className="absolute inset-0 bg-black/40 -z-5 pointer-events-none" /> */}
+
+      <div className="relative z-10">
+        <Navbar />
+
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div 
           className="mb-8"
@@ -97,6 +112,9 @@ const Dashboard = () => {
             </p>
           </div>
         </motion.div>
+        {/* <video src="bg.mp4"
+        autoPlay
+        ></video> */}
 
         {/* Stats Grid */}
         <motion.div 
@@ -207,7 +225,8 @@ const Dashboard = () => {
           </div>
         </motion.div>
       </div>
-      {/* <TakeTest></TakeTest> */}
+    </div>
+    {/* <TakeTest></TakeTest> */}
     </div>
   );
 };

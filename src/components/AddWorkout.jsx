@@ -102,7 +102,7 @@ function AddWorkout({ day, addSingleDayRoutine, index,exercises,capabilites, ini
             onClick={handleEditInitialWorkOut}
             >
               <Pen className="h-4 w-4"></Pen>
-              <span>Want to Edit</span>
+              <span> Edit </span>
             </button>}
             <button
               type="button"
